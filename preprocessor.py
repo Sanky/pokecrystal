@@ -314,7 +314,8 @@ chars = {
 "ť": 0xda,
 "ž": 0xdb,
 "ě": 0xdc,
-"ů": 0xdd
+"ů": 0xdd,
+"ý": 0xde
 }
 
 def separate_comment(l):
