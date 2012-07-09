@@ -14645,17 +14645,17 @@ SECTION "bank12",DATA,BANK[$12]
 INCBIN "baserom.gbc",$48000,$49d24 - $48000
 
 ContinueText: ; 0x49d24
-	db "CONTINUE@"
+	db "Pokračovat@"
 NewGameText: ; 0x49d2d
-	db "NEW GAME@"
+	db "Nová hra@"
 OptionText: ; 0x49d36
-	db "OPTION@"
+	db "Možnosti@"
 MysteryGiftText: ; 0x49d3d
-	db "MYSTERY GIFT@"
+	db "Tajemný Dar@"
 MobileText: ; 0x49d4a
 	db "MOBILE@"
 MobileStudiumText: ; 0x49d51
-	db "MOBILE STUDIUM@"
+	db "MOBILE STUD@"
 
 Label49d60: ; 0x49d60
 	dw $5eee ; XXX is this ContinueASM?
