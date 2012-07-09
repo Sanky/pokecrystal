@@ -414,7 +414,7 @@ def quote_translator(asm):
     return
 
 def extract_token(asm):
-    token = asm.split(" ")[0].replace("\t", "").replace("\n", "")
+    token = asm.replace("    ", "").split(" ")[0].replace("\t", "").replace("\n", "")
     return token
 
 def macro_test(asm):
@@ -570,6 +570,73 @@ def macro_translator(macro, token, line):
 
             index += 1
 
+def text_to_db(asm, token): # This could use work, especially the magic words part.
+    variables = {"player": ("52", 7)}
+    
+    text = asm.split("\"")[1]
+    words = text.replace("#", "####").split()
+    line = []
+    lines = []
+    def checklinelen(line):
+        linelen = 0
+        for word in line:
+            if "`" in word:
+                sword = word.split("`")
+                var = sword[1].lower()
+                linelen += len(sword[0]) + variables[var][1] + len(sword[2]) + 1
+            else:
+                linelen += len(word)+1
+        
+        linelen -= 1
+        
+        if linelen > 19:
+            line.remove(word)
+            lines.append(line)
+            line = [word]
+        
+        return line
+    
+    for word in words:
+        line = checklinelen(line)
+        line.append(word)
+        line = checklinelen(line)
+    
+    lines.append(line)
+    
+    for line in lines:
+        for i, word in enumerate(line):
+            if "`" in word:
+                sword = word.split("`")
+                var = sword[1].lower()
+                line[i] = sword[0] + '", $' + variables[var][0] + ', "' + sword[2]
+    
+    even = True
+    first = True
+    outtext = 'db'
+    for i, line in enumerate(lines):
+        if i+1 == len(lines):
+            if token == "text":
+                end = "51"
+            elif token == "textend":
+                end = "57"
+        else:
+            if not even:
+                if i+1 == len(lines)-1: 
+                    end = "55"
+                else:
+                    end = "51"
+            else:
+                end = "4f"
+        if not first: outtext += ', '
+        outtext += '"' + " ".join(line) + '", $' + end
+        even = not even
+        first = False
+    
+    
+    #sys.stderr.write(str(outtext) + "\n")
+    
+    return outtext.replace("####", "#") + "\n"
+
 for l in sys.stdin:
     # strip and store any comment on this line
     if ";" in l:
@@ -577,7 +644,11 @@ for l in sys.stdin:
     else:
         asm     = l
         comment = None
-
+    
+    token = extract_token(asm)
+    if token in ("text", "textend"):
+        asm = text_to_db(asm, token)
+    
     # convert text to bytes when a quote appears (not in a comment)
     if "\"" in asm:
         quote_translator(asm)
