@@ -45167,72 +45167,49 @@ MovementData_0x7a602: ; 0x7a602
 ; 0x7a604
 
 UnknownText_0x7a604: ; 0x7a604
-	db $0, "Ah, ", $52, "…! Náš", $4f
-	db "soused, prof.", $51
-	db "Elm se po tobě", $4f
-	db "scháněl.", $51
-	db "Říkal, že od", $4f
-	db "tebe něco potře-", $55
-	db "buje.", $51
-	db "Ah, málem bych", $4f
-	db "zapoměla! Tvůj", $51
-	db "#GEAR je zpět", $4f
-	db "z opravárny.", $51
-	db "Tumáš!", $57
+    db $0
+    text "Ah, `player`…! Náš soused, prof. Elm se po tobě scháněl."
+    text "Říkal, že od tebe něco potřebuje."
+    text "Ah, málem bych zapoměla! Tvůj #GEAR je zpět z opravny."
+    textend "Tumáš!"
 ; 0x7a6bd
 
 UnknownText_0x7a6bd: ; 0x7a6bd
-	db $0, "#MON GEAR, či", $4f
-	db "jen #GEAR.", $51
-	db "Nepostradatelný,", $4f
-	db "chceš-li být", $55
-	db "dobrým trenérem.", $51
-	db "Ah, není nastaven", $4f
-	db "den v týdnu.", $51
-	db "Na to se nesmí", $4f
-	db "zapomenout!", $57
+    db $0
+    text "#MON GEAR, či jen #GEAR."
+    text "Nepostradatelný, chceš-li být dobrým trenérem."
+    textend "Ah, není nastaven den v týdnu. Na to se nesmí zapomenout!"
 ; 0x7a742
 
 UnknownText_0x7a742: ; 0x7a742
-	db $0, "Je letní čas?", $57
+	textend "Je letní čas?"
 ; 0x7a763
 
 UnknownText_0x7a763: ; 0x7a763
-	db $0, "Vrať se domů, až", $4f
-	db "budeš chtít", $51
-	db "upravit letní čas.", $51
-	db "Mimochodem, víš", $4f
-	db "jak se používá", $55
-	db "telefon?", $57
+    db $0
+    text "Vrať se domů, až budeš chtít upravit letní čas."
+    textend "Mimochodem, víš jak se používá telefon?"
 ; 0x7a7cb
 
 UnknownText_0x7a7cb: ; 0x7a7cb
-	db $0, "Nejde jen o to", $4f
-	db "#GEAR pustit a", $51
-	db "vybrat ikonku", $4f
-	db "telefonu?", $57
+	db $0
+	textend "Nejde jen o to #GEAR pustit a vybrat ikonku telefonu?"
 ; 0x7a807
 
 UnknownText_0x7a807: ; 0x7a807
-	db $0, "Přečtu návod.", $51
-	db "Zapni #GEAR a", $4f
-	db "vyber ikonku", $55
-	db "telefonu.", $57
+	db $0
+	textend "Přečtu návod. Zapni #GEAR a vyber ikonku telefonu."
 ; 0x7a850
 
 UnknownText_0x7a850: ; 0x7a850
-	db $0, "Telefonní čísla se", $4f
-	db "ukládají v paměti.", $51
-	db "Prostě vyber jméno", $4f
-	db "toho, komu chceš", $51
-	db "zavolat. No není", $4f
-	db "to pohodlné?", $57
+	db $0
+	text "Telefonní čísla se ukládají v paměti. Prostě vyber jméno toho, komu chceš zavolat."
+	textend "No není to pohodlné?"
 ; 0x7a8b5
 
 UnknownText_0x7a8b5: ; 0x7a8b5
-	db $0, "PROF.ELM is wait-", $4f
-	db "ing for you.", $51
-	db "Hurry up, baby!", $57
+	db $0
+	text "Prof. Elm na tebe čeká. Pospěš si, zlatíčko!"
 ; 0x7a8e5
 
 UnknownText_0x7a8e5: ; 0x7a8e5
