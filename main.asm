@@ -45167,69 +45167,66 @@ MovementData_0x7a602: ; 0x7a602
 ; 0x7a604
 
 UnknownText_0x7a604: ; 0x7a604
-	db $0, "Oh, ", $52, "…! Our", $4f
-	db "neighbor, PROF.", $51
-	db "ELM, was looking", $4f
-	db "for you.", $51
-	db "He said he wanted", $4f
-	db "you to do some-", $55
-	db "thing for him.", $51
-	db "Oh! I almost for-", $4f
-	db "got! Your #MON", $51
-	db "GEAR is back from", $4f
-	db "the repair shop.", $51
-	db "Here you go!", $57
+	db $0, "Ah, ", $52, "…! Náš", $4f
+	db "soused, prof.", $51
+	db "Elm se po tobě", $4f
+	db "scháněl.", $51
+	db "Říkal, že od", $4f
+	db "tebe něco potře-", $55
+	db "buje.", $51
+	db "Ah, málem bych", $4f
+	db "zapoměla! Tvůj", $51
+	db "#GEAR je zpět", $4f
+	db "z opravárny.", $51
+	db "Tumáš!", $57
 ; 0x7a6bd
 
 UnknownText_0x7a6bd: ; 0x7a6bd
-	db $0, "#MON GEAR, or", $4f
-	db "just #GEAR.", $51
-	db "It's essential if", $4f
-	db "you want to be a", $55
-	db "good trainer.", $51
-	db "Oh, the day of the", $4f
-	db "week isn't set.", $51
-	db "You mustn't forget", $4f
-	db "that!", $57
+	db $0, "#MON GEAR, či", $4f
+	db "jen #GEAR.", $51
+	db "Nepostradatelný,", $4f
+	db "chceš-li být", $55
+	db "dobrým trenérem.", $51
+	db "Ah, není nastaven", $4f
+	db "den v týdnu.", $51
+	db "Na to se nesmí", $4f
+	db "zapomenout!", $57
 ; 0x7a742
 
 UnknownText_0x7a742: ; 0x7a742
-	db $0, "Is it Daylight", $4f
-	db "Saving Time now?", $57
+	db $0, "Je letní čas?", $57
 ; 0x7a763
 
 UnknownText_0x7a763: ; 0x7a763
-	db $0, "Come home to", $4f
-	db "adjust your clock", $51
-	db "for Daylight", $4f
-	db "Saving Time.", $51
-	db "By the way, do you", $4f
-	db "know how to use", $55
-	db "the PHONE?", $57
+	db $0, "Vrať se domů, až", $4f
+	db "budeš chtít", $51
+	db "upravit letní čas.", $51
+	db "Mimochodem, víš", $4f
+	db "jak se používá", $55
+	db "telefon?", $57
 ; 0x7a7cb
 
 UnknownText_0x7a7cb: ; 0x7a7cb
-	db $0, "Don't you just", $4f
-	db "turn the #GEAR", $51
-	db "on and select the", $4f
-	db "PHONE icon?", $57
+	db $0, "Nejde jen o to", $4f
+	db "#GEAR pustit a", $51
+	db "vybrat ikonku", $4f
+	db "telefonu?", $57
 ; 0x7a807
 
 UnknownText_0x7a807: ; 0x7a807
-	db $0, "I'll read the", $4f
-	db "instructions.", $51
-	db "Turn the #GEAR", $4f
-	db "on and select the", $55
-	db "PHONE icon.", $57
+	db $0, "Přečtu návod.", $51
+	db "Zapni #GEAR a", $4f
+	db "vyber ikonku", $55
+	db "telefonu.", $57
 ; 0x7a850
 
 UnknownText_0x7a850: ; 0x7a850
-	db $0, "Phone numbers are", $4f
-	db "stored in memory.", $51
-	db "Just choose a name", $4f
-	db "you want to call.", $51
-	db "Gee, isn't that", $4f
-	db "convenient?", $57
+	db $0, "Telefonní čísla se", $4f
+	db "ukládají v paměti.", $51
+	db "Prostě vyber jméno", $4f
+	db "toho, komu chceš", $51
+	db "zavolat. No není", $4f
+	db "to pohodlné?", $57
 ; 0x7a8b5
 
 UnknownText_0x7a8b5: ; 0x7a8b5
