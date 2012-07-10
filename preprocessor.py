@@ -367,7 +367,7 @@ def quote_translator(asm):
     for token in asms:
         i = i + 1
 
-        if even:
+        if even and len(token) != 0:
             # token is a string to convert to byte values
             while len(token):
                 # read a single UTF-8 codepoint
@@ -389,7 +389,7 @@ def quote_translator(asm):
                     token = token[2:]
                 else:
                     token = token[1:]
-
+                    
                     # certain apostrophe-letter pairs are only a single byte
                     if char == "'" and len(token) > 0 and \
                         (token[0] == "d" or \
@@ -632,10 +632,7 @@ def text_to_db(asm, token): # This could use work, especially the magic words pa
         even = not even
         first = False
     
-    
-    #sys.stderr.write(str(outtext) + "\n")
-    
-    return outtext.replace("####", "#") + "\n"
+    return outtext.replace("####", "#").replace(', ""', " ").replace('"", ', " ") + "\n"
 
 for l in sys.stdin:
     # strip and store any comment on this line
