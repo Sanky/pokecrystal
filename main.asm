@@ -1,6 +1,23 @@
 SECTION "bank0",HOME
 
-INCBIN "baserom.gbc",0,$100
+INCBIN "baserom.gbc",0,$63
+
+EnemyAdvice:
+    ld a, [$D22D]
+    dec a
+    jr z, .wild
+    ld de, FoeText
+    ret
+.wild
+    ld de, WildTextMale
+    ret
+
+WildTextMale:
+    db "Divoký @"
+WildTextFemale:
+    db "Divoká @"
+WildTextNeuter:
+    db "Divoké @"
 
 SECTION "romheader",HOME[$100]
 	nop
@@ -274,7 +291,7 @@ Char5D:
 	ld de, $c621
 	jr .asm_126a ; 0x120c $5c
 .asm_120e
-	ld de, Char5AText ; Enemy
+	call EnemyAdvice
 	call $1078
 	ld h, b
 	ld l, c
@@ -340,6 +357,7 @@ INCBIN "baserom.gbc",$1281,$1293 - $1281
 Char56Text: ; 0x1293
 	db "…@"
 Char5AText: ; 0x1295
+FoeText:
 	db "Cizí @@"
 
 INCBIN "baserom.gbc",$129c,$1356 - $129c
