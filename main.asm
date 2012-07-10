@@ -45328,20 +45328,15 @@ UnknownText_0x7a8b5: ; 0x7a8b5
 ; 0x7a8e5
 
 UnknownText_0x7a8e5: ; 0x7a8e5
-	db $0, "So, what was PROF.", $4f
-	db "ELM's errand?", $51
-	db "…", $51
-	db "That does sound", $4f
-	db "challenging.", $51
-	db "But, you should be", $4f
-	db "proud that people", $55
-	db "rely on you.", $57
+	db $0
+	text "Takže co prof. Elm potřeboval?"
+	text "…"
+	textend "Tak to zní náročně. Ale měl bys být hrdý, že na tebe lidé spoléhají." ; XXX
 ; 0x7a957
 
 UnknownText_0x7a957: ; 0x7a957
-	db $0, $52, ", do it!", $51
-	db "I'm behind you all", $4f
-	db "the way!", $57
+    db $0
+    textend "`player`, do toho! Ve všem stojím za tebou!"
 ; 0x7a97d
 
 UnknownText_0x7a97d: ; 0x7a97d
@@ -45372,25 +45367,20 @@ UnknownText_0x7aa3a: ; 0x7aa3a
 ; 0x7aa64
 
 UnknownText_0x7aa64: ; 0x7aa64
-	db $0, "The sink is spot-", $4f
-	db "less. Mom likes it", $55
-	db "clean.", $57
+    db $0
+    textend "Ten dřez je bez poskvrny. Máma má ráda čistotu."
 ; 0x7aa91
 
 UnknownText_0x7aa91: ; 0x7aa91
-	db $0, "Let's see what's", $4f
-	db "in the fridge…", $51
-	db "FRESH WATER and", $4f
-	db "tasty LEMONADE!", $57
+    db $0
+    text "Koukněme, co je v lednici…"
+    textend "Čerstvá voda a chutná limonáda!"
 ; 0x7aad0
 
 UnknownText_0x7aad0: ; 0x7aad0
-	db $0, "There's a movie on", $4f
-	db "TV: Stars dot the", $51
-	db "sky as two boys", $4f
-	db "ride on a train…", $51
-	db "I'd better get", $4f
-	db "rolling too!", $57
+    db $0
+    text "Právě je v televizi film: na obloze se třpití hvězdy zatímco dva kluci jedou vlakem…"
+    textend "Už ať jsem také na cestě!" ; Také bych se měl/a vydat!
 ; 0x7ab31
 
 KrissHouse1F_MapEventHeader: ; 0x7ab31
