@@ -50260,14 +50260,14 @@ BattleText_0x80730: ; 0x80730
 	db $0, "!", $58
 ; 0x80746
 
-WildPokemonAppearedText: ; 0x80746
+OldWildPokemonAppearedText: ; 0x80746
 	db $0, "Wild @"
 	text_from_ram $c616
 	db $0, $4f
 	db "appeared!", $58
 ; 0x8075c
 
-HookedPokemonAttackedText: ; 0x8075c
+OldHookedPokemonAttackedText: ; 0x8075c
 	db $0, "The hooked", $4f
 	db "@"
 	text_from_ram $c616
@@ -50275,13 +50275,13 @@ HookedPokemonAttackedText: ; 0x8075c
 	db "attacked!", $58
 ; 0x80778
 
-PokemonFellFromTreeText: ; 0x80778
+OldPokemonFellFromTreeText: ; 0x80778
 	text_from_ram $c616
 	db $0, " fell", $4f
 	db "out of the tree!", $58
 ; 0x80793
 
-WildPokemonAppearedText2: ; 0x80793
+OldWildPokemonAppearedText2: ; 0x80793
 	db $0, "Wild @"
 	text_from_ram $c616
 	db $0, $4f
@@ -51358,7 +51358,36 @@ BattleText_0x8188e: ; 0x8188e
 	db "left today!", $57
 ; 0x818ac
 
-INCBIN "baserom.gbc",$818ac,$84000-$818ac
+INCBIN "baserom.gbc",$818ac,$823c8-$818ac
+
+WildPokemonAppearedText: ; 0x80746
+	db $0, "Divoký @"
+	text_from_ram $c616
+	db $0, $4f
+	db "se objevil!", $58
+; 0x8075c
+
+HookedPokemonAttackedText: ; 0x8075c
+	db $0, "Polapený ", $4f
+	db "@"
+	text_from_ram $c616
+	db $0, $55
+	db "zaútočil!", $58
+; 0x80778
+
+PokemonFellFromTreeText: ; 0x80778
+	db $0, "Ze stromu", $4f
+	db "spadl @"
+	text_from_ram $c616
+	db $0, "!", $58
+; 0x80793
+
+WildPokemonAppearedText2: ; 0x80793
+	db $0, "Divoký @"
+	text_from_ram $c616
+	db $0, $4f
+	db "se objevil!", $58
+; 0x807a9
 
 SECTION "bank21",DATA,BANK[$21]
 
