@@ -1063,7 +1063,7 @@ NameInputLower:
     db "a b c d e f g h i"
     db "j k l m n o p q r"
     db "s t u v w x y z  "
-    db "× ( ) : ; [ ] ", $e1, " ", $e2
+    db "áéíóúčďňřšťžěůý.,"
     db "UPPER  DEL   END "
 BoxNameInputLower:
     db "a b c d e f g h i"
@@ -1076,7 +1076,7 @@ NameInputUpper:
     db "A B C D E F G H I"
     db "J K L M N O P Q R"
     db "S T U V W X Y Z  "
-    db "- ? ! / . ,      "
+    db "ÁÉÍÓÚČĎŇŘŠŤŽ-?!/:"
     db "lower  DEL   END "
 BoxNameInputUpper:
     db "A B C D E F G H I"
