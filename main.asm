@@ -45212,6 +45212,7 @@ UnknownText_0x7a6bd: ; 0x7a6bd
 ; 0x7a742
 
 UnknownText_0x7a742: ; 0x7a742
+    db $0
 	textend "Je letní čas?"
 ; 0x7a763
 
@@ -45239,7 +45240,7 @@ UnknownText_0x7a850: ; 0x7a850
 
 UnknownText_0x7a8b5: ; 0x7a8b5
 	db $0
-	text "Prof. Elm na tebe čeká. Pospěš si, zlatíčko!"
+	textend "Prof. Elm na tebe čeká. Pospěš si, zlatíčko!"
 ; 0x7a8e5
 
 UnknownText_0x7a8e5: ; 0x7a8e5
@@ -50079,6 +50080,7 @@ dw Wednesday
 dw Thursday
 dw Friday
 dw Saturday
+dw Sunday
 
 Sunday:
     db " Neděle@"
@@ -50094,7 +50096,7 @@ Friday:
     db " Pátek@"
 Saturday:
     db " Sobota@"
-db "1234567"
+db "@@@@@" # spare chars
 
 INCBIN "baserom.gbc",$90A3F,$94000-$90A3F
 
