@@ -15043,43 +15043,43 @@ dw Normal, Fighting, Flying, Poison, Ground, Rock, Bird, Bug, Ghost, Steel
 dw Normal, Normal, Normal, Normal, Normal, Normal, Normal, Normal, Normal
 dw UnknownType, Fire, Water, Grass, Electric, Psychic, Ice, Dragon, Dark
 
-Normal:
+OldNormal:
     db "NORMAL@"
-Fighting:
+OldFighting:
     db "FIGHTING@"
-Flying:
+OldFlying:
     db "FLYING@"
-Poison:
+OldPoison:
     db "POISON@"
-UnknownType:
+OldUnknownType:
     db "???@"
-Fire:
+OldFire:
     db "FIRE@"
-Water:
+OldWater:
     db "WATER@"
-Grass:
+OldGrass:
     db "GRASS@"
-Electric:
+OldElectric:
     db "ELECTRIC@"
-Psychic:
+OldPsychic:
     db "PSYCHIC@"
-Ice:
+OldIce:
     db "ICE@"
-Ground:
+OldGround:
     db "GROUND@"
-Rock:
+OldRock:
     db "ROCK@"
-Bird:
+OldBird:
     db "BIRD@"
-Bug:
+OldBug:
     db "BUG@"
-Ghost:
+OldGhost:
     db "GHOST@"
-Steel:
+OldSteel:
     db "STEEL@"
-Dragon:
+OldDragon:
     db "DRAGON@"
-Dark:
+OldDark:
     db "DARK@"
 
 INCBIN "baserom.gbc",$50A28,$53384 - $50A28
@@ -15341,7 +15341,46 @@ INCBIN "baserom.gbc",$50A28,$53384 - $50A28
 	db "?????@@@@@"
 	db "?????@@@@@"
 
-INCBIN "baserom.gbc",$53D84,$54000 - $53D84
+INCBIN "baserom.gbc",$53D84,$53e20 - $53D84
+
+Normal:
+    db "Normální@"
+Fighting:
+    db "Bojový@"
+Flying:
+    db "Létající@"
+Poison:
+    db "Jedovatý@"
+UnknownType:
+    db "???@"
+Fire:
+    db "Ohnivý@"
+Water:
+    db "Vodní@"
+Grass:
+    db "Travní@"
+Electric:
+    db "Elektrický@"
+Psychic:
+    db "Psychický@"
+Ice:
+    db "Ledový@"
+Ground:
+    db "Zemní@"
+Rock:
+    db "Kamenný@"
+Bird:
+    db "@"
+Bug:
+    db "Hmyzí@"
+Ghost:
+    db "Duší@"
+Steel:
+    db "Ocelový@"
+Dragon:
+    db "Dračí@"
+Dark:
+    db "Temný@"
 
 SECTION "bank15",DATA,BANK[$15]
 
