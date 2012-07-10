@@ -50070,16 +50070,31 @@ INCBIN "baserom.gbc",$8C000,$4000
 
 SECTION "bank24",DATA,BANK[$24]
 
-INCBIN "baserom.gbc",$90000,$90A02-$90000
+INCBIN "baserom.gbc",$90000,$909F2-$90000
 
-DayNames:
-    db " SUNDAY@"
-    db " MONDAY@"
-    db " TUESDAY@"
-    db "WEDNESDAY@"
-    db "THURSDAY@"
-    db " FRIDAY@"
-    db "SATURDAY@"
+dw Sunday
+dw Monday
+dw Tuesday
+dw Wednesday
+dw Thursday
+dw Friday
+dw Saturday
+
+Sunday:
+    db " Neděle@"
+Monday:
+    db " Pondělí@"
+Tuesday:
+    db " Úterý@"
+Wednesday:
+    db " Středa@"
+Thursday:
+    db " Čtvrtek@"
+Friday:
+    db " Pátek@"
+Saturday:
+    db " Sobota@"
+db "1234567"
 
 INCBIN "baserom.gbc",$90A3F,$94000-$90A3F
 
