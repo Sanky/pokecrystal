@@ -50096,7 +50096,18 @@ INCBIN "baserom.gbc",$8C000,$4000
 
 SECTION "bank24",DATA,BANK[$24]
 
-INCBIN "baserom.gbc",$90000,$4000
+INCBIN "baserom.gbc",$90000,$90A02-$90000
+
+DayNames:
+    db " SUNDAY@"
+    db " MONDAY@"
+    db " TUESDAY@"
+    db "WEDNESDAY@"
+    db "THURSDAY@"
+    db " FRIDAY@"
+    db "SATURDAY@"
+
+INCBIN "baserom.gbc",$90A3F,$94000-$90A3F
 
 SECTION "bank25",DATA,BANK[$25]
 
