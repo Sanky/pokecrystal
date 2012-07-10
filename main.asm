@@ -45306,37 +45306,30 @@ UnknownText_0x7a957: ; 0x7a957
 ; 0x7a97d
 
 UnknownText_0x7a97d: ; 0x7a97d
-	db $0, "Good morning,", $4f
-	db $14, "!", $51
-	db "I'm visiting!", $57
+	db $0
+	textend "Dobré ráno, `player`! Jsem tu na návštěvě."
 ; 0x7a99c
 
 UnknownText_0x7a99c: ; 0x7a99c
-	db $0, "Hello, ", $14, "!", $4f
-	db "I'm visiting!", $57
+	db $0
+	textend "Ahoj, `player`! Jsem tu na návštěvě."
 ; 0x7a9b4
 
 UnknownText_0x7a9b4: ; 0x7a9b4
-	db $0, "Good evening,", $4f
-	db $14, "!", $51
-	db "I'm visiting!", $57
+	db $0
+	textend "Dobré odpoledne, `player`! Jsem tu na návštěvě."
 ; 0x7a9d3
 
 UnknownText_0x7a9d3: ; 0x7a9d3
-	db $0, $14, ", have you", $4f
-	db "heard?", $51
-	db "My daughter is", $4f
-	db "adamant about", $51
-	db "becoming PROF.", $4f
-	db "ELM's assistant.", $51
-	db "She really loves", $4f
-	db "#MON!", $57
+	db $0
+	text "`player`, už to víš?" ; slyšel/a jsi?
+	textend "Má dcera by se ráda stara Elmovo asistentkou. Opravdu miluje #mony!"
 ; 0x7aa3a
 
 UnknownText_0x7aa3a: ; 0x7aa3a
-	db $0, "Mom's specialty!", $51
-	db "CINNABAR VOLCANO", $4f
-	db "BURGER!", $57
+    db $0
+    text "Mámina specialita!"
+    textend "Burger z Cinnabarského vulkánu!"
 ; 0x7aa64
 
 UnknownText_0x7aa64: ; 0x7aa64
