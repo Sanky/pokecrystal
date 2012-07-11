@@ -19,6 +19,33 @@ WildTextFemale:
 WildTextNeuter:
     db "Divoké @"
 
+; Messing within the stack here, might want to find a better place.
+GenderCharCode:
+    inc de
+    ld a, "@"
+    ld [$C001], a
+    ld a, [$d472]
+    and a
+    jp nz, .female
+.male
+    ld a, [de]
+    inc de
+    jr .print
+.female
+    inc de
+    ld a, [de]
+.print
+    cp a, "_"
+    jp z, .blankchar
+    ld [$c000], a
+    push de
+    ld de, $c000
+    call $1078
+    pop de
+    inc hl
+.blankchar
+    jp NextChar
+
 SECTION "romheader",HOME[$100]
 	nop
 	jp $016e
@@ -184,9 +211,9 @@ CheckDict:
 	jp z, $131f
 	cp $51 ; Player name
 	jp z, $12f2
-	cp $49
-	jp z, $1186 
-	cp $52 ; Mother name
+	cp $49; Mother name.  Replaced with gender disambig
+	jp z, GenderCharCode
+	cp $52 
 	jp z, $118d
 	cp $53
 	jp z, $1194
@@ -45585,7 +45612,7 @@ UnknownText_0x7a604: ; 0x7a604
 UnknownText_0x7a6bd: ; 0x7a6bd
     db $0
     text "#MON GEAR, či jen #GEAR."
-    text "Nepostradatelný, chceš-li být dobrým trenérem."
+    text "Nepostradatelný, chceš-li být dobr|ýo|mu trenér|ek|mo|_u."
     textend "Ah, není nastaven den v týdnu. Na to se nesmí zapomenout!"
 ; 0x7a742
 
@@ -45625,7 +45652,7 @@ UnknownText_0x7a8e5: ; 0x7a8e5
 	db $0
 	text "Takže co prof. Elm potřeboval?"
 	text "…"
-	textend "Tak to zní náročně. Ale měl bys být hrdý, že na tebe lidé spoléhají." ; XXX
+	textend "Tak to zní náročně. Ale měl|_a bys být hrd|ýá, že na tebe lidé spoléhají." ; XXX
 ; 0x7a957
 
 UnknownText_0x7a957: ; 0x7a957
@@ -45650,7 +45677,7 @@ UnknownText_0x7a9b4: ; 0x7a9b4
 
 UnknownText_0x7a9d3: ; 0x7a9d3
 	db $0
-	text "`player`, už to víš?" ; slyšel/a jsi?
+	text "`player`, slyšel|_a jsi?"
 	textend "Má dcera by se ráda stara Elmovo asistentkou. Opravdu miluje #mony!"
 ; 0x7aa3a
 
@@ -45674,7 +45701,7 @@ UnknownText_0x7aa91: ; 0x7aa91
 UnknownText_0x7aad0: ; 0x7aad0
     db $0
     text "Právě je v televizi film: na obloze se třpití hvězdy zatímco dva kluci jedou vlakem…"
-    textend "Už ať jsem také na cestě!" ; Také bych se měl/a vydat!
+    textend "Také bych se měl|_a vydat!"
 ; 0x7ab31
 
 KrissHouse1F_MapEventHeader: ; 0x7ab31

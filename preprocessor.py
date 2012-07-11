@@ -315,7 +315,9 @@ chars = {
 "ž": 0xdb,
 "ě": 0xdc,
 "ů": 0xdd,
-"ý": 0xde
+"ý": 0xde,
+'|': 0x49, # Gender disambig
+"_": 0x25 # Skip char
 }
 
 def separate_comment(l):
@@ -585,7 +587,8 @@ def text_to_db(asm, token): # This could use work, especially the magic words pa
                 var = sword[1].lower()
                 linelen += len(sword[0]) + variables[var][1] + len(sword[2]) + 1
             else:
-                linelen += len(word)+1
+                gch = word.count("|")
+                linelen += len(word) - (gch * 2) + 1
         
         linelen -= 1
         
