@@ -46,6 +46,25 @@ GenderCharCode:
 .blankchar
     jp NextChar
 
+GetItemNameAccusative:
+	push hl
+	push bc
+	ld a, [$d265] ; Get the item
+	;cp $bf ; Is it a TM?
+	;jr nc, .tm ; 0x346f $d
+	ld [$cf60], a
+	ld a, $3 ; Item names
+	ld [$cf61], a
+	call $33c3
+	;jr .nottm ; 0x347c $3
+;.tm
+	;call $3487
+;.nottm
+	ld de, $d073
+	pop bc
+	pop hl
+	ret
+
 SECTION "romheader",HOME[$100]
 	nop
 	jp $016e
@@ -808,7 +827,7 @@ INCBIN "baserom.gbc",$3376,$33ab - $3376
 MoveItemPointerTable: ; 33ab
 	dbw $14, $7384
 	dbw BANK(MoveNames), MoveNames
-	dbw $00, $0000
+	dbw BANK(ItemNamesAccusative), ItemNamesAccusative
 	dbw BANK(ItemNames), ItemNames
 	dbw $00, $ddff
 	dbw $00, $d3a8
@@ -884,9 +903,11 @@ GetNthString: ; 3411
 	ret
 ; 0x3420
 
-INCBIN "baserom.gbc",$3420,$346a - $3420
+INCBIN "baserom.gbc",$3420,$3468 - $3420
 
-GetItemName: ; 346a
+GetItemName: ; 3468
+	push hl
+	push bc
 	ld a, [$d265] ; Get the item
 	cp $bf ; Is it a TM?
 	jr nc, .tm ; 0x346f $d
@@ -1426,7 +1447,11 @@ BoxNameInputUpper:
     db "lower  DEL   END "
 
 
-INCBIN "baserom.gbc",$11e5d,$14000 - $11e5d
+INCBIN "baserom.gbc",$11e5d,$12302 - $11e5d
+
+	call GetItemNameAccusative ; _ found one _!
+
+INCBIN "baserom.gbc",$12305,$14000 - $12305
 
 SECTION "bank5",DATA,BANK[$5]
 
@@ -10334,8 +10359,12 @@ MysticalmanTrainerGroupHeader: ; 0x3ba4c
 
 SECTION "bankF",DATA,BANK[$F]
 
-INCBIN "baserom.gbc",$3C000,$3ddc2 - $3C000
+INCBIN "baserom.gbc",$3C000,$3ddb9 - $3C000
 
+	call GetItemNameAccusative
+	ld hl,$7192
+	ld a,9
+	rst $08
 	ld hl, RecoveredUsingText
 	jp $3ad5
 ; 0x3ddc8
@@ -64927,7 +64956,16 @@ Route31VioletGate_SecondMapHeader: ; 0x966a4
 	db 0
 ; 0x966b0
 
-INCBIN "baserom.gbc",$966b0,$1950
+INCBIN "baserom.gbc",$966b0,$97057-$966b0
+
+	call GetItemNameAccusative ; put the __ in bag
+	ret
+
+INCBIN "baserom.gbc",$9705b,$976e1-$9705b
+
+	call GetItemNameAccusative ; Hey, there's __!  Obtained __! (shame it's the same..)
+
+INCBIN "baserom.gbc",$976e4,$98000-$976e4
 
 SECTION "bank26",DATA,BANK[$26]
 
@@ -82401,7 +82439,7 @@ UnknownText_0x18cf0f: ; 0x18cf0f
 ; 0x18cf41
 
 UnknownText_0x18cf41: ; 0x18cf41
-	db $0, $52, " found", $4f
+	db $16, $52, " found", $4f
 	db "@"
 	text_from_ram $d099
 	db $0, "!", $57
@@ -114146,13 +114184,14 @@ UnknownText_0x1c4719: ; 0x1c4719
 ; 0x1c472c
 
 UnknownText_0x1c472c: ; 0x1c472c
-	db $0, $52, " put the", $4f
+	db $0, $52, " dal|_a", $4f
 	db "@"
 	text_from_ram $d073
-	db $0, " in", $55
-	db "the @"
+	db $0, " do", $55
+	db "@"
 	text_from_ram $d099
 	db $0, ".", $58
+	db "@@@@@"
 ; 0x1c474b
 
 UnknownText_0x1c474b: ; 0x1c474b
