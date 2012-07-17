@@ -1,6 +1,19 @@
 SECTION "bank0",HOME
 
-INCBIN "baserom.gbc",0,$100
+INCBIN "baserom.gbc",0,$63
+
+VWFAdvice:
+    ld [W_HACK_OLDA], a
+    ld a, [$FF9D]
+    ld [W_HACK_OLDBANK], a
+    ld a, BANK(ActualVWFAdvice)
+    ld [$2000], a
+    call ActualVWFAdvice
+    ld a, [W_HACK_OLDBANK]
+    ld [$2000], a
+    ld [$FF9D], a
+    ld a, [W_HACK_OLDA]
+    ret
 
 SECTION "romheader",HOME[$100]
 	nop
@@ -259,8 +272,10 @@ CheckDict:
 	ld b, $e4
 	call $13c6
 .asm_1174
-	ld [hli], a
-	call $313d
+	;ld [hli], a
+	nop
+	call VWFAdvice
+	;call $313d ; wait after letter
 	jp NextChar
 ; 0x117b
 
@@ -117753,6 +117768,486 @@ SECTION "bank78",DATA,BANK[$78]
 INCBIN "baserom.gbc",$1E0000,$4000
 
 SECTION "bank79",DATA,BANK[$79]
+
+; VWF
+VWFFont:
+    INCBIN "gfx/font.1bpp"
+    
+VWFTable:
+    db $8, $7, $7, $7, $6, $6, $7, $6, $6, $6, $8, $6, $8, $7, $7, $6
+    db $8, $7, $7, $6, $7, $8, $8, $8, $8, $8, $6, $6, $6, $6, $6, $6
+    db $7, $6, $6, $6, $6, $6, $6, $5, $2, $3, $5, $2, $6, $5, $6, $5
+    db $5, $5, $5, $5, $5, $6, $6, $6, $5, $5, $7, $6, $6, $6, $6, $8
+    db $0, $0, $0, $0, $0, $0, $0, $0, $0, $0, $0, $0, $0, $0, $0, $0
+    db $0, $0, $0, $0, $0, $0, $0, $0, $0, $0, $0, $0, $0, $0, $0, $0
+    db $0, $0, $0, $7, $8, $8, $8, $7, $4, $3, $8, $8, $8, $8, $8, $8
+    db $8, $8, $8, $8, $4, $8, $8, $8, $8, $8, $8, $8, $8, $8, $8, $8
+
+ActualVWFAdvice:
+    ld a, [W_HACK_OLDA]
+    push af
+    push bc
+    push de
+    ld [W_VWF_CHARACTER], a
+    push hl
+    ld d,h
+    ld e,l
+	call WriteLetter
+	pop hl
+	pop de
+	pop bc
+	pop af
+	inc hl
+	;call $38D3
+	ret
+
+NormalTextbox:
+    ld a, $c0
+    ld hl, $c4a5
+    call ClearLine
+    call OverwriteLine
+    call ClearLine
+    call OverwriteLine
+    ret
+
+ScrollTextBox:
+    ld a, $c0
+    ld hl, $c4a5
+    call OverwriteLine
+    call ClearLine
+    call OverwriteLine
+    call ClearLine
+    ret
+    
+SwapTextBox:
+    ld a, $d2
+    ld hl, $c4a5
+    call ClearLine
+    call OverwriteLine
+    ld a, $c0
+    call ClearLine
+    call OverwriteLine
+    ret
+    
+ScrollSwapTextBox:
+    ld a, $d2
+    ld hl, $c4a5
+    call OverwriteLine
+    call ClearLine
+    ld a, $c0
+    call OverwriteLine
+    call ClearLine
+    ret
+    
+OverwriteLine:
+    ld b, $12
+.loop
+    ld [hli], a
+    inc a
+    dec b
+    jp nz, .loop
+    ld c, $02
+    ld b, $0
+    add hl, bc
+    ret
+
+ClearLine:
+    push af
+    ld b, $12
+    ld a, $7f
+.loop
+    ld [hli],a
+    dec b
+    jp nz, .loop
+    ld c, $02
+    ld b, $0
+    add hl, bc
+    pop af
+    ret
+
+ClearVariableTiles: ; This is not optimized at all.
+    push af
+    ld a, $00
+    ld [W_VWF_LETTERNUM], a
+    ld [W_VWF_CURTILENUM], a
+    ld [W_VWF_CURTILEROW], a
+    ld [W_VWF_CURTILECOL], a
+    ld [W_VWF_CURROW], a ; This should probably be reset elsewhere..
+    ld hl,$8c00
+    ld c, $24
+    ld b, $2d ; this bank
+    ld de, $7000
+    call CopyVideoData
+    pop af
+    ret
+    
+CopyColumn:
+    ; b = source column
+    ; c = dest column
+    ; de = source number
+    ; hl = dest number
+    push hl
+    push de
+    ld a, $08
+    ld [W_VWF_CURTILEROW], a
+.Copy
+    ld a, [de]
+    and a, b
+    jr nz, .CopyOne
+.CopyZero
+    ld a, %11111111
+    xor c
+    and [hl]
+    jp .Next
+.CopyOne
+    ld a, c
+    or [hl]
+.Next
+    ld [hli],a
+    inc de
+    ld a, [W_VWF_CURTILEROW]
+    dec a
+    ld [W_VWF_CURTILEROW], a
+    jp nz, .Copy
+    pop de
+    pop hl
+    ret
+    
+WriteLetter:
+    ; Store the original tile location.
+    ld hl, W_VWF_TILELOC1
+    ld [hl], d
+    inc hl
+    ld [hl], e
+    
+    ; Check if VWF is enabled, bail if not.
+    ld a, [W_VWF_ENABLED]
+    dec a
+    jr nz, .IsDialogue ; XXX  change from pokered: nz
+    jp .NotDialogue
+.IsDialogue
+    ; Get the tile offset from the address.  This is kind of a hack.
+    ld a, e
+    sub a, $b9
+    ld e, a
+    ld a, d
+    sbc a, $c5
+    ld d, a
+    and a
+    jp nz,.NotDialogue
+    
+    ld a, e
+    and a
+    jr nz, .NotFirstLocation
+    ; If at the beginning of the first line, clear VWF data.
+    ld [W_VWF_LETTERNUM], a
+    call ClearVariableTiles
+    call NormalTextbox
+    jr .DialogueAfterTileWrite
+    
+.NotFirstLocation
+    cp $28
+    jr c, .Dialogue
+    sub $16
+    cp $12
+    jp nz, .NotNewLine
+    ld [W_VWF_LETTERNUM], a
+    ld a, $12
+    ld [W_VWF_LETTERNUM], a
+    ld [W_VWF_CURTILENUM], a
+    ld a, $00
+    ld [W_VWF_CURTILEROW], a
+    ld [W_VWF_CURTILECOL], a
+    ;ld a, [W_VWF_PREVIOUSLINE]
+    ;dec a
+    jr nz, .LastLineWasFirst
+    ld [W_VWF_LETTERNUM], a
+    ;ld [W_VWF_PREVIOUSLINE], a
+    jp .DialogueAfterTileWrite
+.NotNewLine
+    cp $22
+    jr nc, .Dialogue
+    ld a, $00
+    ld [W_VWF_LETTERNUM], a
+    jr .DialogueAfterTileWrite
+.LastLineWasFirst
+    ld a, $1
+    ;ld [W_VWF_PREVIOUSLINE], a
+    jp .DialogueAfterTileWrite
+.Dialogue
+    ld [W_VWF_LETTERNUM], a
+.DialogueAfterTileWrite
+    ; Store the character tile in BUILDAREA1.
+    ld a, [W_VWF_CHARACTER]
+    sub a, $80
+    ld hl, VWFFont
+    ld b, 0
+    ld c, a
+    ld a, $8
+    call AddNTimes
+    ld bc, $0008
+    ld a, BANK(VWFFont)
+    ld de, W_VWF_BUILDAREA1
+    call FarCopyData; copy bc source bytes from a:hl to de
+    
+    ld a, $1
+    ld [W_VWF_NUMTILESUSED], a
+    
+    ; Get the character length from the width table.
+    ; Space is a special case.
+    ld a, [W_VWF_CHARACTER]
+    sub a, $80
+    cp a, $ff
+    jr nz, .NotSpace
+    ld a, $06
+    ld [W_VWF_CHARACTERWIDTH], a
+    jp .WidthWritten
+.NotSpace
+    ld c, a
+    ld b, $00
+    ld hl, VWFTable
+    add hl, bc
+    ld a, [hl]
+    ld [W_VWF_CHARACTERWIDTH], a
+.WidthWritten
+    ; Set up some things for building the tile.
+    ; Special cased to fix column $0, which is invalid (not a power of 2)
+    ld de, W_VWF_BUILDAREA1
+    ld hl, W_VWF_BUILDAREA3
+    ;ld b, a
+    ld b, %10000000
+    ld a, [W_VWF_CURTILECOL]
+    and a
+    jr nz, .ColumnIsFine
+    ld a, $80
+.ColumnIsFine
+    ld c, a ; a
+.DoColumn
+    ; Copy the column.
+    call CopyColumn
+    rr c
+    jr c, .TileOverflow
+    rrc b
+    ld a, [W_VWF_CHARACTERWIDTH]
+    dec a
+    ld [W_VWF_CHARACTERWIDTH], a
+    jr nz, .DoColumn 
+    jr .Done
+.TileOverflow
+    ld c, $80
+    ld a, $2
+    ld [W_VWF_NUMTILESUSED], a
+    ld hl, W_VWF_BUILDAREA4
+    jr .ShiftB
+.DoColumnTile2
+    call CopyColumn
+    rr c
+.ShiftB
+    rrc b
+   ld a, [W_VWF_CHARACTERWIDTH]
+    dec a
+    ld [W_VWF_CHARACTERWIDTH], a
+    jr nz, .DoColumnTile2
+.Done
+    ld a, c
+    ld [W_VWF_CURTILECOL], a
+    
+    ;ld de, W_VWF_BUILDAREA1
+    ;ld hl, W_VWF_BUILDAREA3
+
+    ; Get the tilemap offset.
+    ld hl, $8c00
+    ld a, [W_VWF_CURTILENUM]
+    ld b, $0
+    ld c, a
+    ld a, 16
+    call AddNTimes
+    
+    ld b, $0
+    
+    ; Write the new tile(s)
+    ld a, [W_VWF_NUMTILESUSED]
+    ld c, a
+    ld de, W_VWF_BUILDAREA3
+    call CopyVideoDataDouble ; copy (c * 8) source bytes from b:de to hl during V-blank
+
+    ld a, [W_VWF_NUMTILESUSED]
+    dec a
+    dec a
+    jr nz, .SecondAreaUnused
+    
+    ; If we went over one tile, make sure we start with it next time
+    ld a, [W_VWF_CURTILENUM]
+    inc a
+    ld [W_VWF_CURTILENUM], a
+    ld a, $00
+    ld hl, W_VWF_BUILDAREA4
+    ld de, W_VWF_BUILDAREA3
+    ld bc, $0008
+    call FarCopyData ; XXX don't use far
+    ld hl, W_VWF_BUILDAREA4
+    ld a, $0
+    ld [hli], a
+    ld [hli], a
+    ld [hli], a
+    ld [hli], a
+    ld [hli], a
+    ld [hli], a
+    ld [hli], a
+    ld [hli], a ; lazy
+    
+
+.SecondAreaUnused
+    ; If we went over the last character allocated for VWF tiles, wrap around.
+    ; This is an error handler; ideally it wouldn't happen.
+    ld a, [W_VWF_CURTILENUM]
+    cp $22
+    jr c, .Return
+    ld a, $00
+    ld [W_VWF_CURTILENUM], a ; Prevent overflow
+.Return
+    ret
+.NotDialogue
+    ; We're not within dialogue, so let's do what the original code would.
+    ld a, [W_VWF_TILELOC1]
+    ld h, a
+    ld a, [W_VWF_TILELOC2]
+    ld l, a
+    ld a, [W_VWF_CHARACTER]
+    ld [hl], a
+    ret
+
+FarCopyDataDouble: ; 182B
+	ld [$ff8b],a
+	ld a,[$ffb8]
+	push af
+	ld a,[$ff8b]
+	ld [$ffb8],a
+	ld [$2000],a
+.loop\@
+	ld a,[hli]
+	ld [de],a
+	inc de
+	ld [de],a
+	inc de
+	dec bc
+	ld a,c
+	or b
+	jr nz,.loop\@
+	pop af
+	ld [$ffb8],a
+	ld [$2000],a
+	ret
+
+; copy (c * 16) bytes from b:de to hl during V-blank
+; transfers up to 128 bytes per V-blank
+CopyVideoData: ; 1848
+	ld a,[$FFBA] ; save auto-transfer enabled flag
+	push af
+	xor a
+	ld [$FFBA],a ; disable auto-transfer while copying
+	ld a,[$ffb8]
+	ld [$ff8b],a
+	ld a,b
+	ld [$ffb8],a
+	ld [$2000],a
+	ld a,e
+	ld [$FFC7],a
+	ld a,d
+	ld [$FFC7 + 1],a
+	ld a,l
+	ld [$FFC9],a
+	ld a,h
+	ld [$FFC9 + 1],a
+.loop\@
+	ld a,c
+	cp a,8 ; are there more than 128 bytes left to copy?
+	jr nc,.copyMaxSize\@ ; only copy up to 128 bytes at a time
+.copyRemainder\@
+	ld [$FFC6],a
+	call DelayFrame ; wait for V-blank handler to perform the copy
+	ld a,[$ff8b]
+	ld [$ffb8],a
+	ld [$2000],a
+	pop af
+	ld [$FFBA],a ; restore original auto-transfer enabled flag
+	ret
+.copyMaxSize\@
+	ld a,8 ; 128 bytes
+	ld [$FFC6],a
+	call DelayFrame ; wait for V-blank handler to perform the copy
+	ld a,c
+	sub a,8
+	ld c,a
+	jr .loop\@
+
+; copy (c * 8) source bytes from b:de to hl during V-blank
+; copies each source byte to the destination twice (next to each other)
+; transfers up to 64 source bytes per V-blank
+CopyVideoDataDouble: ; 1886
+	ld a,[$FFBA] ; save auto-transfer enabled flag
+	push af
+	xor a
+	ld [$FFBA],a ; disable auto-transfer while copying
+	ld a,[$ffb8]
+	ld [$ff8b],a
+	ld a,b
+	ld [$ffb8],a
+	ld [$2000],a
+	ld a,e
+	ld [$FFCC],a
+	ld a,d
+	ld [$FFCC + 1],a
+	ld a,l
+	ld [$FFCE],a
+	ld a,h
+	ld [$FFCE + 1],a
+.loop\@
+	ld a,c
+	cp a,8 ; are there more than 64 source bytes left to copy?
+	jr nc,.copyMaxSize\@ ; only copy up to 64 source bytes at a time
+.copyRemainder\@
+	ld [$FFCB],a
+	call DelayFrame ; wait for V-blank handler to perform the copy
+	ld a,[$ff8b]
+	ld [$ffb8],a
+	ld [$2000],a
+	pop af
+	ld [$FFBA],a ; restore original auto-transfer enabled flag
+	ret
+.copyMaxSize\@
+	ld a,8 ; 64 source bytes
+	ld [$FFCB],a
+	call DelayFrame ; wait for V-blank handler to perform the copy
+	ld a,c
+	sub a,8
+	ld c,a
+	jr .loop\@
+
+FarCopyData: ; 009D
+; copy bc bytes of data from a:hl to de
+	ld [W_HACK_TMP1],a ; save future bank # for later
+	ld a,[$FF9D] ; get current bank #
+	push af
+	ld a,[W_HACK_TMP1] ; get future bank #, switch
+	ld [$FF9D],a
+	ld [$2000],a
+	call CopyData_
+	pop af       ; okay, done, time to switch back
+	ld [$FF9D],a
+	ld [$2000],a
+	ret
+
+CopyData_: ; 00B5
+; copy bc bytes of data from hl to de
+	ld a,[hli]
+	ld [de],a
+	inc de
+	dec bc
+	ld a,c
+	or b
+	jr nz,CopyData_
+	ret
 
 SECTION "bank7A",DATA,BANK[$7A]
 

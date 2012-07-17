@@ -1094,3 +1094,49 @@ PartyMon5Nickname: ; 0xde6d
 	ds 11
 PartyMon6Nickname: ; 0xde78
 	ds 11
+	
+SECTION "VWFSpace",BSS[$df50]
+; Original names because I'm lazy and like the caps.
+W_HACK_OLDBANK:
+    ds 1
+W_HACK_OLDA:
+    ds 1
+W_HACK_PREDEF:
+    ds 1
+W_HACK_TMP1:
+    ds 1
+W_HACK_TMP2:
+    ds 1
+W_HACK_TMP3:
+    ds 1
+W_VWF_LETTERNUM:
+    ds 1
+W_VWF_CHARACTER:
+    ds 1
+W_VWF_TILELOC1:
+    ds 1
+W_VWF_TILELOC2:
+    ds 1
+W_VWF_CURTILENUM:
+    ds 1
+W_VWF_CURTILECOL:
+    ds 1
+W_VWF_CURTILEROW:
+    ds 1
+W_VWF_NUMTILESUSED:
+    ds 1
+W_VWF_CHARACTERWIDTH:
+    ds 1
+W_VWF_CURROW:
+    ds 1
+W_VWF_ENABLED:
+    ds 1
+
+W_VWF_BUILDAREA1:
+    ds 8
+W_VWF_BUILDAREA2:
+    ds 8
+W_VWF_BUILDAREA3:
+    ds 8
+W_VWF_BUILDAREA4:
+    ds 8
