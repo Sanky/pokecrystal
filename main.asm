@@ -7,11 +7,10 @@ VWFAdvice:
     ld a, [$FF9D]
     ld [W_HACK_OLDBANK], a
     ld a, BANK(ActualVWFAdvice)
-    ld [$2000], a
+    rst $10
     call ActualVWFAdvice
     ld a, [W_HACK_OLDBANK]
-    ld [$2000], a
-    ld [$FF9D], a
+    rst $10
     ld a, [W_HACK_OLDA]
     ret
 
@@ -117850,7 +117849,7 @@ ActualVWFAdvice:
 
 NormalTextbox:
     ld a, $c0
-    ld hl, $c4a5
+    ld hl, $c5a5
     call ClearLine
     call OverwriteLine
     call ClearLine
@@ -117859,7 +117858,7 @@ NormalTextbox:
 
 ScrollTextBox:
     ld a, $c0
-    ld hl, $c4a5
+    ld hl, $c5a5
     call OverwriteLine
     call ClearLine
     call OverwriteLine
@@ -117868,7 +117867,7 @@ ScrollTextBox:
     
 SwapTextBox:
     ld a, $d2
-    ld hl, $c4a5
+    ld hl, $c5a5
     call ClearLine
     call OverwriteLine
     ld a, $c0
@@ -117878,7 +117877,7 @@ SwapTextBox:
     
 ScrollSwapTextBox:
     ld a, $d2
-    ld hl, $c4a5
+    ld hl, $c5a5
     call OverwriteLine
     call ClearLine
     ld a, $c0
@@ -117920,11 +117919,12 @@ ClearVariableTiles: ; This is not optimized at all.
     ld [W_VWF_CURTILEROW], a
     ld [W_VWF_CURTILECOL], a
     ld [W_VWF_CURROW], a ; This should probably be reset elsewhere..
-    ld hl,$8c00
+    ld hl, $8c00
     ld c, $24
-    ld b, $2d ; this bank
-    ld de, $7000
-    call CopyVideoData
+    ld b, 0
+    call DelayFrame
+    ld a, 0
+    call ByteFill ; bc*a starting at hl
     pop af
     ret
     
@@ -118033,9 +118033,9 @@ WriteLetter:
     ld a, $8
     call AddNTimes
     ld bc, $0008
-    ld a, BANK(VWFFont)
+    ;ld a, BANK(VWFFont)
     ld de, W_VWF_BUILDAREA1
-    call FarCopyData; copy bc source bytes from a:hl to de
+    call CopyBytes; copy bc source bytes from hl to de
     
     ld a, $1
     ld [W_VWF_NUMTILESUSED], a
@@ -118110,13 +118110,38 @@ WriteLetter:
     ld a, 16
     call AddNTimes
     
-    ld b, $0
+    ld d, h
+    ld e, l
     
     ; Write the new tile(s)
+    ld bc, 0
     ld a, [W_VWF_NUMTILESUSED]
-    ld c, a
-    ld de, W_VWF_BUILDAREA3
-    call CopyVideoDataDouble ; copy (c * 8) source bytes from b:de to hl during V-blank
+    dec a
+    jr z, .one
+    ld c, $08
+    jr .ok
+.one
+    ld c, $10
+.ok
+    ld hl, W_VWF_BUILDAREA3
+    ;call DelayFrame
+    push de
+    ld de, $df80
+    call FarCopyBytesDouble ; copy bc*2 bytes from a:hl to de ; XXX don't far
+    ; Let's try DMA instead!
+    pop de
+    ld hl, $df80
+    ld a, h
+    ld [$ff51], a
+    ld a, l
+    ld [$ff52], a
+    ld a, d
+    ld [$ff53], a
+    ld a, e
+    ld [$ff54], a
+    ld a, $81
+    ld [$ff55], a
+
 
     ld a, [W_VWF_NUMTILESUSED]
     dec a
@@ -118131,7 +118156,7 @@ WriteLetter:
     ld hl, W_VWF_BUILDAREA4
     ld de, W_VWF_BUILDAREA3
     ld bc, $0008
-    call FarCopyData ; XXX don't use far
+    call CopyBytes
     ld hl, W_VWF_BUILDAREA4
     ld a, $0
     ld [hli], a
@@ -118163,138 +118188,6 @@ WriteLetter:
     ld a, [W_VWF_CHARACTER]
     ld [hl], a
     ret
-
-FarCopyDataDouble: ; 182B
-	ld [$ff8b],a
-	ld a,[$ffb8]
-	push af
-	ld a,[$ff8b]
-	ld [$ffb8],a
-	ld [$2000],a
-.loop\@
-	ld a,[hli]
-	ld [de],a
-	inc de
-	ld [de],a
-	inc de
-	dec bc
-	ld a,c
-	or b
-	jr nz,.loop\@
-	pop af
-	ld [$ffb8],a
-	ld [$2000],a
-	ret
-
-; copy (c * 16) bytes from b:de to hl during V-blank
-; transfers up to 128 bytes per V-blank
-CopyVideoData: ; 1848
-	ld a,[$FFBA] ; save auto-transfer enabled flag
-	push af
-	xor a
-	ld [$FFBA],a ; disable auto-transfer while copying
-	ld a,[$ffb8]
-	ld [$ff8b],a
-	ld a,b
-	ld [$ffb8],a
-	ld [$2000],a
-	ld a,e
-	ld [$FFC7],a
-	ld a,d
-	ld [$FFC7 + 1],a
-	ld a,l
-	ld [$FFC9],a
-	ld a,h
-	ld [$FFC9 + 1],a
-.loop\@
-	ld a,c
-	cp a,8 ; are there more than 128 bytes left to copy?
-	jr nc,.copyMaxSize\@ ; only copy up to 128 bytes at a time
-.copyRemainder\@
-	ld [$FFC6],a
-	call DelayFrame ; wait for V-blank handler to perform the copy
-	ld a,[$ff8b]
-	ld [$ffb8],a
-	ld [$2000],a
-	pop af
-	ld [$FFBA],a ; restore original auto-transfer enabled flag
-	ret
-.copyMaxSize\@
-	ld a,8 ; 128 bytes
-	ld [$FFC6],a
-	call DelayFrame ; wait for V-blank handler to perform the copy
-	ld a,c
-	sub a,8
-	ld c,a
-	jr .loop\@
-
-; copy (c * 8) source bytes from b:de to hl during V-blank
-; copies each source byte to the destination twice (next to each other)
-; transfers up to 64 source bytes per V-blank
-CopyVideoDataDouble: ; 1886
-	ld a,[$FFBA] ; save auto-transfer enabled flag
-	push af
-	xor a
-	ld [$FFBA],a ; disable auto-transfer while copying
-	ld a,[$ffb8]
-	ld [$ff8b],a
-	ld a,b
-	ld [$ffb8],a
-	ld [$2000],a
-	ld a,e
-	ld [$FFCC],a
-	ld a,d
-	ld [$FFCC + 1],a
-	ld a,l
-	ld [$FFCE],a
-	ld a,h
-	ld [$FFCE + 1],a
-.loop\@
-	ld a,c
-	cp a,8 ; are there more than 64 source bytes left to copy?
-	jr nc,.copyMaxSize\@ ; only copy up to 64 source bytes at a time
-.copyRemainder\@
-	ld [$FFCB],a
-	call DelayFrame ; wait for V-blank handler to perform the copy
-	ld a,[$ff8b]
-	ld [$ffb8],a
-	ld [$2000],a
-	pop af
-	ld [$FFBA],a ; restore original auto-transfer enabled flag
-	ret
-.copyMaxSize\@
-	ld a,8 ; 64 source bytes
-	ld [$FFCB],a
-	call DelayFrame ; wait for V-blank handler to perform the copy
-	ld a,c
-	sub a,8
-	ld c,a
-	jr .loop\@
-
-FarCopyData: ; 009D
-; copy bc bytes of data from a:hl to de
-	ld [W_HACK_TMP1],a ; save future bank # for later
-	ld a,[$FF9D] ; get current bank #
-	push af
-	ld a,[W_HACK_TMP1] ; get future bank #, switch
-	ld [$FF9D],a
-	ld [$2000],a
-	call CopyData_
-	pop af       ; okay, done, time to switch back
-	ld [$FF9D],a
-	ld [$2000],a
-	ret
-
-CopyData_: ; 00B5
-; copy bc bytes of data from hl to de
-	ld a,[hli]
-	ld [de],a
-	inc de
-	dec bc
-	ld a,c
-	or b
-	jr nz,CopyData_
-	ret
 
 SECTION "bank7A",DATA,BANK[$7A]
 
