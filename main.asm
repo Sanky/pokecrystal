@@ -117817,7 +117817,7 @@ SECTION "bank79",DATA,BANK[$79]
 
 ; VWF
 VWFFont:
-    INCBIN "gfx/font.1bpp"
+    INCBIN "gfx/vwffont.1bpp"
     
 VWFTable:
     db $8, $7, $7, $7, $6, $6, $7, $6, $6, $6, $8, $6, $8, $7, $7, $6
@@ -118115,22 +118115,25 @@ WriteLetter:
     
     ; Write the new tile(s)
     ld bc, 0
-    ld a, [W_VWF_NUMTILESUSED]
-    dec a
-    jr z, .one
-    ld c, $08
-    jr .ok
-.one
+    ;ld a, [W_VWF_NUMTILESUSED]
+    ;dec a
+    ;jr z, .one
+    ;ld c, $08
+    ;jr .ok
+;.one
+    ;ld c, $10
+;.ok
     ld c, $10
-.ok
     ld hl, W_VWF_BUILDAREA3
     ;call DelayFrame
     push de
-    ld de, $df80
+    push bc
+    ld de, $df90
     call FarCopyBytesDouble ; copy bc*2 bytes from a:hl to de ; XXX don't far
     ; Let's try DMA instead!
+    pop bc
     pop de
-    ld hl, $df80
+    ld hl, $df90
     ld a, h
     ld [$ff51], a
     ld a, l
