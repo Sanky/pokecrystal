@@ -117848,17 +117848,16 @@ ActualVWFAdvice:
 	ret
 
 NormalTextbox:
-    ld a, $5e
+    ld a, $c0
     ld hl, $c5a5
     call ClearLine
     call OverwriteLine
     call ClearLine
     call OverwriteLine
-    call SetTextboxBanks
     ret
 
 ScrollTextBox:
-    ld a, $5e
+    ld a, $c0
     ld hl, $c5a5
     call OverwriteLine
     call ClearLine
@@ -117867,21 +117866,21 @@ ScrollTextBox:
     ret
     
 SwapTextBox:
-    ld a, $5e
+    ld a, $d2
     ld hl, $c5a5
     call ClearLine
     call OverwriteLine
-    ld a, $c5
+    ld a, $c0
     call ClearLine
     call OverwriteLine
     ret
     
 ScrollSwapTextBox:
-    ld a, $5e
+    ld a, $d2
     ld hl, $c5a5
     call OverwriteLine
     call ClearLine
-    ld a, $c5
+    ld a, $c0
     call OverwriteLine
     call ClearLine
     ret
@@ -117910,33 +117909,6 @@ ClearLine:
     ld b, $0
     add hl, bc
     pop af
-    ret
-    
-SetTextboxBanks:
-    ld hl,$cec9
-    ld de, $000e
-    add hl, de
-    call SetRowBank
-    call SetRowBank
-    call SetRowBank
-    call SetRowBank
-    ; Pretty sure I'm supposed to /schedule/ the redraw, not force it like this...
-    ld a, 1
-    ld [$ff4f], a
-    ld hl, $cdd9
-    call $327b
-    ld a, 00
-    ld [$ff4f], a
-    ret
-
-SetRowBank:
-    ld b, $d
-    ld a, $f
-.loop
-    ldi [hl], a
-    dec b
-    jp nz, .loop
-    inc hl
     ret
 
 ClearVariableTiles: ; This is not optimized at all.
@@ -118131,9 +118103,7 @@ WriteLetter:
     ;ld hl, W_VWF_BUILDAREA3
 
     ; Get the tilemap offset.
-    ;ld hl, $8c00
-    ;ld hl, $8800
-    ld hl, $95c0
+    ld hl, $8c00
     ld a, [W_VWF_CURTILENUM]
     ld b, $0
     ld c, a
@@ -118163,9 +118133,6 @@ WriteLetter:
     ; Let's try DMA instead!
     pop bc
     pop de
-    di
-    ld a, $01
-    ld [$ff4f], a ; BANK
     ld hl, $df90
     ld a, h
     ld [$ff51], a
@@ -118210,17 +118177,10 @@ WriteLetter:
     ; This is an error handler; ideally it wouldn't happen.
     ld a, [W_VWF_CURTILENUM]
     cp $22
-    jr c, .CheckDMA
+    jr c, .Return
     ld a, $00
     ld [W_VWF_CURTILENUM], a ; Prevent overflow
-.CheckDMA
-    ; Check for DMA completeness
-    ld a, [$FF55]
-    bit 7, a
-    jr z, .CheckDMA
-    ld a, $00
-    ld [$ff4f], a ; BANK
-    ei
+.Return
     ret
 .NotDialogue
     ; We're not within dialogue, so let's do what the original code would.
