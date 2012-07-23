@@ -117820,14 +117820,14 @@ VWFFont:
     INCBIN "gfx/vwffont.1bpp"
     
 VWFTable:
-    db $8, $7, $7, $7, $6, $6, $7, $6, $6, $6, $8, $6, $8, $7, $7, $6
-    db $8, $7, $7, $6, $7, $8, $8, $8, $8, $8, $6, $6, $6, $6, $6, $6
-    db $7, $6, $6, $6, $6, $6, $6, $5, $2, $3, $5, $2, $6, $5, $6, $5
-    db $5, $5, $5, $5, $5, $6, $6, $6, $5, $5, $7, $6, $6, $6, $6, $8
-    db $0, $0, $0, $0, $0, $0, $0, $0, $0, $0, $0, $0, $0, $0, $0, $0
-    db $0, $0, $0, $0, $0, $0, $0, $0, $0, $0, $0, $0, $0, $0, $0, $0
-    db $0, $0, $0, $7, $8, $8, $8, $7, $4, $3, $8, $8, $8, $8, $8, $8
-    db $8, $8, $8, $8, $4, $8, $8, $8, $8, $8, $8, $8, $8, $8, $8, $8
+    db 8, 7, 7, 7, 6, 6, 7, 6, 6, 6, 8, 6, 8, 7, 7, 6
+    db 8, 7, 7, 6, 7, 8, 8, 8, 8, 8, 6, 6, 6, 6, 6, 6
+    db 7, 6, 6, 6, 6, 6, 6, 5, 2, 3, 5, 2, 6, 5, 6, 5
+    db 5, 5, 5, 5, 5, 6, 6, 6, 5, 5, 0, 0, 0, 0, 0, 0
+    db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+    db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 7, 8, 6, 5, 8
+    db 3, 8, 8, 7, 7, 8, 8, 7, 4, 8, 6, 8, 8, 8, 8, 8
+    db 8, 8, 8, 8, 4, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8
 
 ActualVWFAdvice:
     ld a, [W_HACK_OLDA]
@@ -117848,7 +117848,7 @@ ActualVWFAdvice:
 	ret
 
 NormalTextbox:
-    ld a, $c0
+    ld a, $ba
     ld hl, $c5a5
     call ClearLine
     call OverwriteLine
@@ -117857,7 +117857,7 @@ NormalTextbox:
     ret
 
 ScrollTextBox:
-    ld a, $c0
+    ld a, $ba
     ld hl, $c5a5
     call OverwriteLine
     call ClearLine
@@ -117866,21 +117866,21 @@ ScrollTextBox:
     ret
     
 SwapTextBox:
-    ld a, $d2
+    ld a, $cc
     ld hl, $c5a5
     call ClearLine
     call OverwriteLine
-    ld a, $c0
+    ld a, $ba
     call ClearLine
     call OverwriteLine
     ret
     
 ScrollSwapTextBox:
-    ld a, $d2
+    ld a, $cc
     ld hl, $c5a5
     call OverwriteLine
     call ClearLine
-    ld a, $c0
+    ld a, $ba
     call OverwriteLine
     call ClearLine
     ret
@@ -117919,7 +117919,7 @@ ClearVariableTiles: ; This is not optimized at all.
     ld [W_VWF_CURTILEROW], a
     ld [W_VWF_CURTILECOL], a
     ld [W_VWF_CURROW], a ; This should probably be reset elsewhere..
-    ld hl, $8c00
+    ld hl, $8ba0
     ld c, $24
     ld b, 0
     call DelayFrame
@@ -118103,7 +118103,7 @@ WriteLetter:
     ;ld hl, W_VWF_BUILDAREA3
 
     ; Get the tilemap offset.
-    ld hl, $8c00
+    ld hl, $8ba0
     ld a, [W_VWF_CURTILENUM]
     ld b, $0
     ld c, a
