@@ -117911,6 +117911,26 @@ ClearLine:
     pop af
     ret
 
+DoDMA:
+    ld a, h
+    ld [$ff51], a
+    ld a, l
+    ld [$ff52], a
+    ld a, d
+    ld [$ff53], a
+    ld a, e
+    ld [$ff54], a
+    ld a, c
+    ld [$ff55], a
+    ret
+
+WaitDMA:
+    ; Check for DMA completeness
+    ld a, [$FF55]
+    bit 7, a
+    jr z, WaitDMA
+    ret
+
 ClearVariableTiles: ; This is not optimized at all.
     push af
     ld a, $00
@@ -117919,14 +117939,24 @@ ClearVariableTiles: ; This is not optimized at all.
     ld [W_VWF_CURTILEROW], a
     ld [W_VWF_CURTILECOL], a
     ld [W_VWF_CURROW], a ; This should probably be reset elsewhere..
-    ld hl, $8ba0
-    ld c, $24
-    ld b, 0
-    call DelayFrame
-    ld a, 0
-    call ByteFill ; bc*a starting at hl
+    ld de, $8ba0
+    ld hl, $7000 ; look at me I'm copying zeros
+    ld c, $8f
+    call DoDMA
+    call WaitDMA
+    ld de, $8ca0
+    call DoDMA
+    call WaitDMA
+    ld de, $8da0
+    ld c, $82
+    call DoDMA
+    ;ld c, $24
+    ;ld b, 0
+    ;call DelayFrame
+    ;ld a, 0
+    ;call ByteFill ; bc*a starting at hl
     pop af
-    ret
+	ret
     
 CopyColumn:
     ; b = source column
