@@ -1,6 +1,53 @@
 SECTION "bank0",HOME
+SECTION "rst0",HOME[$0]
+    di
+    jp Start
 
-INCBIN "baserom.gbc",0,$63
+SECTION "rst8",HOME[$8]
+    jp $2d63
+
+SECTION "rst10",HOME[$10] ; Bankswitch
+    ld [$ff9d], a
+    ld [$2000], a
+    ret
+
+SECTION "rst18",HOME[$18] ; Unused
+    rst $38
+
+SECTION "rst20",HOME[$20] ; Unused
+    rst $38
+
+SECTION "rst28",HOME[$28] ; Jump from pointer table
+    push de
+    ld e, a
+    ld d, 00
+    add hl, de
+    add hl, de
+    ld a, [hli]
+    ld h, [hl]
+    ld l, a
+    pop de
+    jp [hl] ; (actually jp hl)
+
+; rst30 is midst rst28
+
+SECTION "rst38",HOME[$38] ; Unused
+    rst $38
+
+SECTION "vblank",HOME[$40] ; vblank interrupt
+    jp $0283
+
+SECTION "lcd",HOME[$48] ; lcd interrupt
+    jp $0552
+    
+SECTION "timer",HOME[$50] ; timer interrupt
+    jp $3e93
+
+SECTION "serial",HOME[$58] ; serial interrupt
+    jp $06ef
+    
+SECTION "joypad",HOME[$60] ; joypad interrupt
+    jp $092e
 
 VWFAdvice:
     ld [W_HACK_OLDA], a
@@ -15,6 +62,7 @@ VWFAdvice:
     ret
 
 SECTION "romheader",HOME[$100]
+Start:
 	nop
 	jp $016e
 
@@ -32887,6 +32935,9 @@ UnknownScript_0x6cfac: ; 0x6cfac
 	loadmovesprites
 	applymovement $4, MovementData_0x6d267
 	disappear $4
+; 0x6d075
+
+UnknownScript_0x6d075: ; 0x6d075
 	applymovement $0, MovementData_0x6d271
 	end
 ; 0x6d07a
@@ -33702,8 +33753,8 @@ TeamRocketBaseB2F_MapEventHeader: ; 0x6de44
 	xy_trigger 0, $d, $4, $0, UnknownScript_0x6d08b, $0, $0
 	xy_trigger 1, $b, $e, $0, UnknownScript_0x6cf95, $0, $0
 	xy_trigger 1, $b, $f, $0, UnknownScript_0x6cf9c, $0, $0
-	xy_trigger 2, $c, $e, $0, $5075, $0, $0
-	xy_trigger 2, $c, $f, $0, $5075, $0, $0
+	xy_trigger 2, $c, $e, $0, UnknownScript_0x6d075, $0, $0
+	xy_trigger 2, $c, $f, $0, UnknownScript_0x6d075, $0, $0
 	xy_trigger 2, $3, $c, $0, UnknownScript_0x6d07a, $0, $0
 	xy_trigger 2, $a, $c, $0, UnknownScript_0x6d07a, $0, $0
 	xy_trigger 2, $b, $c, $0, UnknownScript_0x6d07a, $0, $0
@@ -40595,6 +40646,9 @@ UnknownScript_0x751e4: ; 0x751e4
 
 UnknownScript_0x751e7: ; 0x751e7
 	moveperson $5, $14, $6
+; 0x751eb
+
+UnknownScript_0x751eb: ; 0x751eb
 	appear $5
 	applymovement $5, MovementData_0x7521b
 	playsound $0041
@@ -40781,7 +40835,7 @@ FastShip1F_MapEventHeader: ; 0x754f1
 
 	; xy triggers
 	db 2
-	xy_trigger 2, $6, $18, $0, $51eb, $0, $0
+	xy_trigger 2, $6, $18, $0, UnknownScript_0x751eb, $0, $0
 	xy_trigger 2, $6, $19, $0, UnknownScript_0x751e7, $0, $0
 
 	; signposts
@@ -44730,6 +44784,9 @@ UnknownScript_0x78f0c: ; 0x78f0c
 
 UnknownScript_0x78f12: ; 0x78f12
 	applymovement $0, MovementData_0x78f72
+; 0x78f16
+
+UnknownScript_0x78f16: ; 0x78f16
 	applymovement $0, MovementData_0x78f74
 	spriteface $7, $2
 	loadfont
@@ -45485,7 +45542,7 @@ ElmsLab_MapEventHeader: ; 0x7a3de
 	db 8
 	xy_trigger 1, $6, $4, $0, UnknownScript_0x78c65, $0, $0
 	xy_trigger 1, $6, $5, $0, UnknownScript_0x78c65, $0, $0
-	xy_trigger 3, $5, $4, $0, $4f16, $0, $0
+	xy_trigger 3, $5, $4, $0, UnknownScript_0x78f16, $0, $0
 	xy_trigger 3, $5, $5, $0, UnknownScript_0x78f12, $0, $0
 	xy_trigger 5, $8, $4, $0, UnknownScript_0x78e7f, $0, $0
 	xy_trigger 5, $8, $5, $0, UnknownScript_0x78e8e, $0, $0
@@ -45543,6 +45600,9 @@ UnknownScript_0x7a4d7: ; 0x7a4d7
 
 UnknownScript_0x7a4d8: ; 0x7a4d8
 	setbit1 $0000
+; 0x7a4db
+
+UnknownScript_0x7a4db: ; 0x7a4db
 	playmusic $004e
 	showemote $0, $2, 15
 	spriteface $0, $2
@@ -45916,7 +45976,7 @@ KrissHouse1F_MapEventHeader: ; 0x7ab31
 	; xy triggers
 	db 2
 	xy_trigger 0, $4, $8, $0, UnknownScript_0x7a4d8, $0, $0
-	xy_trigger 0, $4, $9, $0, $64db, $0, $0
+	xy_trigger 0, $4, $9, $0, UnknownScript_0x7a4db, $0, $0
 
 	; signposts
 	db 4
@@ -95605,6 +95665,9 @@ UnknownScript_0x19c0a4: ; 0x19c0a4
 
 UnknownScript_0x19c0aa: ; 0x19c0aa
 	moveperson $3, $27, $7
+; 0x19c0ae
+
+UnknownScript_0x19c0ae: ; 0x19c0ae
 	spriteface $0, $3
 	showemote $0, $0, 15
 	special $006a
@@ -96056,7 +96119,7 @@ CherrygroveCity_MapEventHeader: ; 0x19c829
 
 	; xy triggers
 	db 2
-	xy_trigger 1, $6, $21, $0, $40ae, $0, $0
+	xy_trigger 1, $6, $21, $0, UnknownScript_0x19c0ae, $0, $0
 	xy_trigger 1, $7, $21, $0, UnknownScript_0x19c0aa, $0, $0
 
 	; signposts
