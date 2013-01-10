@@ -100913,10 +100913,12 @@ MovementData_0x1a10a1: ; 0x1a10a1
 ; 0x1a10a7
 
 UnknownText_0x1a10a7: ; 0x1a10a7
-	db $0, "#MON hide in", $4f
-	db "the grass. Who", $51
-	db "knows when they'll", $4f
-	db "pop out…", $57
+	;db $0, "#MON hide in", $4f
+	;db "the grass. Who", $51
+	;db "knows when they'll", $4f
+	;db "pop out…", $57
+	db $0
+	textend "#moni se schovávají v trávě . Kdo ví, kdy na tebe vyskočí…"
 ; 0x1a10df
 
 UnknownText_0x1a10df: ; 0x1a10df
@@ -100952,12 +100954,15 @@ UnknownText_0x1a11e3: ; 0x1a11e3
 ; 0x1a1214
 
 UnknownText_0x1a1214: ; 0x1a1214
-	db $0, "Yo. How are your", $4f
-	db "#MON?", $51
-	db "If they're weak", $4f
-	db "and not ready for", $51
-	db "battle, keep out", $4f
-	db "of the grass.", $57
+    db $0
+    text "Čau, jak jsou na tom tví Pokémoni?"
+    textend "Pokud jsou slabí a nejsou připravení bojovat, vyhýbej se trávě."
+	;db $0, "Yo. How are your", $4f
+	;db "#MON?", $51
+	;db "If they're weak", $4f
+	;db "and not ready for", $51
+	;db "battle, keep out", $4f
+	;db "of the grass.", $57
 ; 0x1a126c
 
 UnknownText_0x1a126c: ; 0x1a126c
